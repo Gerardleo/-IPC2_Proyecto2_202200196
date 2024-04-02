@@ -63,5 +63,20 @@ class lista_doble:
     if self.primero == None:
       return True
     return False
+  
+  def buscarEntrada(self, fila, columna):
+    temp = self.primero
+    while temp != None:
+      if temp.getValor().getFila() == fila and temp.getValor().getColumna() == columna:
+        return True
+      temp = temp.siguiente
+    return False
 
+  def buscarObjetivo(self, fila, columna):
+    temp = self.primero
+    while temp != None:
+      if temp.getValor().getFila() == fila and temp.getValor().getColumna() == columna:
+        return temp.getValor().getNombre()
+      temp = temp.siguiente
+    return None
 
