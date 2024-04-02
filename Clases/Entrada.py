@@ -22,7 +22,3 @@ class Entrada:
         contenido.add(f"Entrada en fila {self.fila} y columna {self.columna}")
         return contenido.getTexto()
     
-    def buscar(self, fila, columna):
-        if self.fila == fila and self.columna == columna:
-            return True
-        return False

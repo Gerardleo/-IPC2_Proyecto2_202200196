@@ -13,6 +13,7 @@ from Clases.printer import Printer as p
 Ruta = None
 Lista_maquetas = ld()
 maquetaSeleccionada = None
+matriz = None
 
 class TextEditorApp:
     def __init__(self, root):
@@ -217,11 +218,12 @@ class TextEditorApp:
                     )
     
     def graficarMaquetaSeleccionada(self):
-        global maquetaSeleccionada
+        global maquetaSeleccionada,matriz
         if maquetaSeleccionada:
             maqueta = Lista_maquetas.buscar(maquetaSeleccionada)
             if maqueta:
                 dot = maqueta.getValor().generar_dot()
+                matriz = maqueta.getValor().matriz()
                 maqueta.getValor().generar_imagen_dot(dot, f'{maquetaSeleccionada}')
                 webbrowser.open(f'{maquetaSeleccionada}.png')
                 messagebox.showinfo(
@@ -235,6 +237,15 @@ class TextEditorApp:
             messagebox.showwarning(title="Error",
                         message="No se ha seleccionado ninguna maqueta",
                     )
+            
+
+    def algoritmoDeResolucion(self):
+        pass
+        # aqui debe hacer el recorrigo de las maquetas seleccionadas y resolverlas
+
+
+
+
     #     if Ruta:
     #         inicializador(Ruta)
 

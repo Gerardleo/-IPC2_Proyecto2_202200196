@@ -73,18 +73,22 @@ class Maqueta:
         dot_code += 'node [shape=plaintext];\n'
         dot_code += 'matriz [label=<<TABLE CELLSPACING="0" CELLPADDING="5" border="0">\n'  # Modificación aquí
         estructura = self.estructura
-
+        objetivo = ""
         for i in range(self.filas):
             dot_code += '<TR>'
             for j in range(self.columnas):
                 char = estructura[i * self.columnas + j]  # Calcular el índice correcto en la cadena
-                if self.entrada.buscar(f'{i},{j}') is not None:
+                if self.entrada.buscarEntrada(i,j) == True:
                     color = 'blue'
-                elif char == '-':
-                    color = 'white'
                 else:
-                    color = 'black'
-                dot_code += f'<TD BGCOLOR="{color}" WIDTH="30" HEIGHT="30"></TD>'
+                    if char == '-':
+                        color = 'white'
+                    else:
+                        color = 'black'
+                    objetivo = self.objetivos.buscarObjetivo(i,j)
+                    if objetivo == None:
+                        objetivo = ""
+                dot_code += f'<TD BGCOLOR="{color}" WIDTH="30" HEIGHT="30">{objetivo}</TD>'
             dot_code += '</TR>'
 
         dot_code += '</TABLE>>];'
@@ -92,11 +96,22 @@ class Maqueta:
 
         return dot_code
 
-
-    
-    
     def generar_imagen_dot(self,dot_code, file_path='maqueta.png'):
         with open('archivo.dot', 'w') as dot_file:
             dot_file.write(dot_code)
         graph = gv.Source(dot_code)
         graph.render(file_path, format='png', cleanup=True)
+
+    def matriz(self):
+        estructura = self.estructura
+        matriz = ld()
+        for i in range(self.filas):
+            fila = ld()
+            for j in range(self.columnas):
+                char = estructura[i * self.columnas + j]
+                if char == '-':
+                    fila.insertar(0)
+                else:
+                    fila.insertar(1)
+            matriz.insertar(fila)
+        return matriz
