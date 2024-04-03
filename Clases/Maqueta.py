@@ -64,7 +64,6 @@ class Maqueta:
         contenido.add(f"===================================")
         contenido.add(f"           Objetivos:              ")
         contenido.add(f"===================================")
-        self.objetivos.ordenar()
         contenido.add(self.objetivos.desplegar())
         return contenido.getTexto()
        
@@ -105,13 +104,25 @@ class Maqueta:
     def matriz(self):
         estructura = self.estructura
         matriz = ld()
+        objetivo = ""
         for i in range(self.filas):
             fila = ld()
             for j in range(self.columnas):
                 char = estructura[i * self.columnas + j]
-                if char == '-':
+                if self.entrada.buscarEntrada(i,j) == True:
                     fila.insertar(0)
                 else:
-                    fila.insertar(1)
+                    objetivo = self.objetivos.buscarObjetivo(i,j)
+                    if objetivo == None:
+                        objetivo = ""
+                        if char == '-':
+                            fila.insertar(char)
+                        else:
+                            fila.insertar(char)
+                    else:
+                        fila.insertar(objetivo)
+                        
             matriz.insertar(fila)
         return matriz
+    
+    

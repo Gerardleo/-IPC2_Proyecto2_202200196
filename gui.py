@@ -14,6 +14,7 @@ Ruta = None
 Lista_maquetas = ld()
 maquetaSeleccionada = None
 matriz = None
+matrizResolucion = None
 
 class TextEditorApp:
     def __init__(self, root):
@@ -47,8 +48,8 @@ class TextEditorApp:
 
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0, bg='#505050', fg='white', activebackground='#707070', activeforeground='white')  # Configuración similar para el menú desplegable de Archivo
         self.menu_bar.add_cascade(label="Resolución de maquetas", menu=self.file_menu)
-        self.file_menu.add_command(label="Seleccionar maquetas para resolucion", command=self.open_file)
-        self.file_menu.add_command(label="Ver Grafica de resolucion", command=self.save_file)
+        self.file_menu.add_command(label="Seleccionar maquetas para resolucion", command=self.seleccionarMaqueta)
+        self.file_menu.add_command(label="Ver Grafica de resolucion", command=resolucionMaqueta)
 
         self.menu_bar.add_command(label="Ayuda", command=self.ayuda)
 
@@ -109,10 +110,11 @@ class TextEditorApp:
         self.second_text_widget.config(state='disabled') 
 
     def limpiarVariables(self):
-        global Ruta, Lista_maquetas, maquetaSeleccionada
+        global Ruta, Lista_maquetas, maquetaSeleccionada, matriz
         self.text_widget.delete(1.0, tk.END)
         self.limpiarSalida()
         Ruta = ""
+        matriz = None
         Lista_maquetas = ld()
         maquetaSeleccionada = None
         messagebox.showinfo(
@@ -193,15 +195,15 @@ class TextEditorApp:
                     )
 
     def seleccionarMaqueta(self):
-        global Lista_maquetas, Ruta, maquetaSeleccionada
+        global Lista_maquetas, Ruta, maquetaSeleccionada, matriz
         contenido = p()
         if Ruta:
             Lista_maquetas.desplegar()
             #mostrar un cuadro de dialogo para seleccionar la maqueta
-
             maquetaSeleccionada = simpledialog.askstring("Seleccionar Maqueta", "Ingrese el nombre de la maqueta que desea seleccionar:")
             maqueta = Lista_maquetas.buscar(maquetaSeleccionada)
             if maqueta:
+                matriz = maqueta.getValor().matriz()
                 contenido.add(maqueta.getValor().desplegar())
                 self.second_text_widget.config(state='normal')
                 self.second_text_widget.delete(1.0, tk.END)
@@ -223,7 +225,6 @@ class TextEditorApp:
             maqueta = Lista_maquetas.buscar(maquetaSeleccionada)
             if maqueta:
                 dot = maqueta.getValor().generar_dot()
-                matriz = maqueta.getValor().matriz()
                 maqueta.getValor().generar_imagen_dot(dot, f'{maquetaSeleccionada}')
                 webbrowser.open(f'{maquetaSeleccionada}.png')
                 messagebox.showinfo(
@@ -237,25 +238,35 @@ class TextEditorApp:
             messagebox.showwarning(title="Error",
                         message="No se ha seleccionado ninguna maqueta",
                     )
-            
-
-    def algoritmoDeResolucion(self):
-        pass
         # aqui debe hacer el recorrigo de las maquetas seleccionadas y resolverlas
 
+def resolucionMaqueta():
+    global matriz
+    if matriz:
+        graficarMatrizResolucion()
 
+        messagebox.showinfo(
+                        message="Se ha resuelto la maqueta correctamente",
+                    )
+    else:
+        messagebox.showwarning(
+                        message="No se ha seleccionado ninguna maqueta",
+                    )
+    
+def graficarMatrizResolucion():
+    global matriz
+    if matriz:
+        dot = matriz.generar_dot()
+        matriz.generar_imagen_dot(dot, 'resolucion')
+        webbrowser.open('resolucion.png')
+        messagebox.showinfo(
+                        message="Se ha generado la grafica de resolucion correctamente",
+                    )
+    else:
+        messagebox.showwarning(
+                        message="No se ha seleccionado ninguna maqueta",
+                    )
 
-
-    #     if Ruta:
-    #         inicializador(Ruta)
-
-    #         messagebox.showinfo(
-    #                     message="Se ha analizado el archivo correctamente",
-    #                 )
-    #     else:
-    #         messagebox.showwarning(
-    #                     message="No se ha seleccionado ningun archivo",
-    #                 )
 if __name__ == "__main__":
     root = tk.Tk()
     app = TextEditorApp(root)
