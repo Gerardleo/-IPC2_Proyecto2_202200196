@@ -1,4 +1,5 @@
 from Clases.Nodo import Nodo as nodo
+import graphviz as gv
 
 class lista_doble:
   def __init__(self):
@@ -71,6 +72,7 @@ class lista_doble:
         return True
       temp = temp.siguiente
     return False
+  
 
   def buscarObjetivo(self, fila, columna):
     temp = self.primero
@@ -79,4 +81,46 @@ class lista_doble:
         return temp.getValor().getNombre()
       temp = temp.siguiente
     return None
+  
+  def generar_dot(self):
+    dot_code = 'digraph G {\n'
+    dot_code += 'node [shape=plaintext];\n'
+    dot_code += 'matriz [label=<<TABLE CELLSPACING="0" CELLPADDING="5" border="0">\n'
+
+    nodo_fila = self.primero
+    while nodo_fila is not None:
+        dot_code += '<TR>'
+        nodo_temp = nodo_fila.valor.primero
+        while nodo_temp is not None:
+            valor = nodo_temp.valor
+            if valor is not None:
+                if valor == '*':
+                    dot_code += f'<TD BGCOLOR="black" WIDTH="30" HEIGHT="30">{valor}</TD>'
+                elif valor == '-':
+                    dot_code += f'<TD BGCOLOR="#ADD8E6" WIDTH="30" HEIGHT="30"></TD>'  # Color azul claro
+                elif valor == 'X':  # Marcar el camino hacia el objetivo con un color diferente
+                    dot_code += f'<TD BGCOLOR="yellow" WIDTH="30" HEIGHT="30">{valor}</TD>'  # Color amarillo para el camino hacia el objetivo
+                else:
+                    dot_code += f'<TD BGCOLOR="white" WIDTH="30" HEIGHT="30">{valor}</TD>'
+            else:
+                dot_code += '<TD></TD>'  # Caso para nodos sin valor (None)
+            nodo_temp = nodo_temp.siguiente
+        dot_code += '</TR>'
+        nodo_fila = nodo_fila.siguiente
+
+    dot_code += '</TABLE>>];'
+    dot_code += '}'
+
+    return dot_code
+
+
+  
+  def generar_imagen_dot(self,dot_code, file_path='maquetaResolucion'):
+      with open('archivoResolucion.dot', 'w') as dot_file:
+            dot_file.write(dot_code)
+      graph = gv.Source(dot_code)
+      graph.render(file_path, format='png', cleanup=True)
+     
+     
+
 
